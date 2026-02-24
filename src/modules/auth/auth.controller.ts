@@ -1,6 +1,6 @@
 import { Body, Controller, Post, Res, UsePipes } from '@nestjs/common';
 import type { Response } from 'express';
-import { CreateUserValidationPipe } from 'src/common/pipes/create-user-validation.pipe';
+import { CreateUserValidationPipe } from '../../common/pipes/create-user-validation.pipe';
 import { CreateUserDto } from '../user/model/dto/create-user.dto';
 
 import { AuthService } from './auth.service';
