@@ -3,6 +3,7 @@ import { UserService } from '../user/user.service';
 import { IUser } from '../user/domain';
 import { CreateUserDto } from '../user/model/dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
+import bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +21,8 @@ export class AuthService {
   }): Promise<Omit<IUser, 'password'> | null> {
     const user = await this.userService.getUserByEmail(username);
 
-    if (user && user.password === pass) {
+    // if (user && user.password === pass) {
+    if (user && (await bcrypt.compare(pass, user.password))) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password: _, ...rest } = user;
 
@@ -54,7 +56,7 @@ export class AuthService {
     const user = await this.validateUser(payload);
 
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Неверные учетные данные');
     }
 
     return this.jwtService.signAsync(user);
