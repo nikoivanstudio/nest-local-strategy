@@ -1,13 +1,12 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
-import { App } from 'supertest/types';
 import { BookController } from '../src/modules/book/book.controller';
 import { BookService } from '../src/modules/book/book.service';
 import { CustomJwtAuthGuard } from '../src/modules/auth/guards/custom-jwt-auth.guard';
 
 describe('BookController (e2e)', () => {
-  let app: INestApplication<App>;
+  let app: INestApplication;
   const bookServiceMock = {
     getBooks: jest.fn(),
     getUniqBook: jest.fn(),
@@ -59,6 +58,23 @@ describe('BookController (e2e)', () => {
       .send(payload)
       .expect(201)
       .expect(created);
+  });
+
+  it('PATCH /book/:id updates book', () => {
+    const payload = {
+      id: '123456789012',
+      title: 'Обновляем название книги',
+      description: 'Измененное описание',
+      authors: 'Федор Достаевский',
+    };
+    const updated = { ...payload };
+    bookServiceMock.updateBook.mockResolvedValue(updated);
+
+    return request(app.getHttpServer())
+      .patch('/book/1')
+      .send(payload)
+      .expect(200)
+      .expect(updated);
   });
 
   it('DELETE /book/:id deleted book', () => {

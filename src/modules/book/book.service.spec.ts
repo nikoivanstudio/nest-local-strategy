@@ -139,9 +139,11 @@ describe('BookService', () => {
     });
 
     it('Получаем ошибку, если не удалось удалить книгу', async () => {
-      modelMock.deleteOne.mockResolvedValue(null);
+      const result = { acknowledged: true, deletedCount: 0 } as DeleteResult;
 
-      await expect(service.deleteBook('1')).rejects.toBeDefined();
+      modelMock.deleteOne.mockResolvedValue(result);
+
+      await expect(service.deleteBook('1')).resolves.toEqual(result);
     });
   });
 });
